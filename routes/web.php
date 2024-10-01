@@ -1,0 +1,72 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\AdminAuthenticate;
+use App\Http\Middleware\AdminUnAuthenticate;
+Route::group(['prefix' => 'admin','namespace'=>'App\Http\Controllers\Admin'], function () {
+    Route::middleware([AdminUnAuthenticate::class])->group(function () {
+        Route::get('/', 'AuthController@showLogin')->name('admin.login.show');
+        Route::post('/login', 'AuthController@login')->name('admin.login');
+    });
+    Route::middleware([AdminAuthenticate::class])->group(function () {
+        Route::get('/dashboard', 'AdminController@dashboard')->name('admin.dashboard');
+        Route::get('/logout', 'AuthController@destroy')->name('admin.logout');
+        Route::get('/home/slider', 'AdminSliderController@index')->name('admin.home.slider');
+        Route::get('/home/slider/add', 'AdminSliderController@add')->name('admin.home.add.slider');
+        Route::get('/blogs', 'AdminBlogController@index')->name('admin.blogs');
+        Route::get('/blogs/add', 'AdminBlogController@add')->name('admin.blogs.add');
+        Route::get('/services', 'AdminServiceController@index')->name('admin.services');
+        Route::get('/services/add', 'AdminServiceController@add')->name('admin.services.add');
+        Route::get('/users', 'AdminUserController@index')->name('admin.users');
+        Route::get('/users/add', 'AdminUserController@add')->name('admin.users.add');
+        Route::get('/about-us', 'AdminAboutController@index')->name('admin.about');
+        Route::get('/about-us/add', 'AdminAboutController@add')->name('admin.about.add');
+        Route::get('/administrators', 'AdminController@index')->name('admin.administrators');
+        Route::get('/administrators/add', 'AdminController@addAdminPage')->name('admin.administrators.add');
+        Route::get('/tags', 'AdminController@showTags')->name('admin.tags');
+        Route::get('/tags/{tag}/edit', 'AdminController@editTags')->name('admin.tags.edit');
+        Route::get('/medications', 'AdminMedicationsController@index')->name('admin.medications');
+        Route::get('/medications/add', 'AdminMedicationsController@add')->name('admin.medications.add');
+        Route::get('/medications/{idmedicamento}', 'AdminMedicationsController@showDosage')->name('admin.medications.dosage');
+        Route::get('/medications/{idmedicamento}/dosage/add', 'AdminMedicationsController@addDosage')->name('admin.medications.dosage.add');
+        Route::get('/reservations', 'AdminReservation@index')->name('admin.reservations');
+        Route::get('/reservations/{pres}', 'AdminReservation@prescription')->name('admin.prescriptions');
+        Route::get('/reservations/prescription/{pres}/add', 'AdminReservation@addPrescription')->name('admin.prescription.add');
+        Route::get('/timeslots', 'AdminTimeslots@index')->name('admin.timeslots');
+        Route::get('/timeslot/{day}', 'AdminTimeslots@view')->name('admin.slots');
+        Route::get('/timeslot/{day}/add', 'AdminTimeslots@add')->name('admin.slots.add');
+        Route::post('/timeslot/store', 'AdminTimeslots@store')->name('admin.slots.store');
+        Route::post('/timeslot/{slot}/update', 'AdminTimeslots@update')->name('admin.slots.update');
+        Route::get('/timeslot/{slot}/destroy', 'AdminTimeslots@destroy')->name('admin.slots.destroy');
+    });
+    Route::middleware([AdminAuthenticate::class])->group(function () {
+        Route::post('/home/slider/store', 'AdminSliderController@store')->name('admin.home.store');
+        Route::post('/administrators', 'AdminController@store')->name('admin.administrators.store');
+        Route::post('/administrators/{idadministrador}/edit', 'AdminController@update')->name('admin.administrators.update');
+        Route::get('/administrators/{idadministrador}/delete', 'AdminController@destroy')->name('admin.administrators.delete');
+        Route::post('/blogs/store', 'AdminBlogController@store')->name('admin.blogs.store');
+        Route::get('/blogs/{blog}/delete', 'AdminBlogController@destroy')->name('admin.blogs.delete');
+        Route::post('/blogs/{blog}/edit', 'AdminBlogController@update')->name('admin.blogs.update');
+        Route::get('/users/{user}/delete', 'AdminUserController@destroy')->name('admin.users.delete');
+        Route::post('/users/store', 'AdminUserController@store')->name('admin.users.store');
+        Route::post('/users/{user}/update', 'AdminUserController@update')->name('admin.users.update');
+        Route::post('/medications/store', 'AdminMedicationsController@store')->name('admin.medications.store');
+        Route::post('/medications/{medication}/edit', 'AdminMedicationsController@update')->name('admin.medications.update');
+        Route::get('/medications/{medication}/delete', 'AdminMedicationsController@destroy')->name('admin.medications.delete');
+        Route::get('/medications/dosage/{dosage}/delete', 'AdminMedicationsController@dosageDestroy')->name('admin.medications.dosage.delete');
+        Route::post('/medications/{idmedicamento}/dosage/store', 'AdminMedicationsController@storeDosage')->name('admin.medications.dosage.store');
+        Route::post('/medications/dosage/{dosage}/update', 'AdminMedicationsController@updateDosage')->name('admin.medications.dosage.update');
+        Route::post('/tags/{tag}/update', 'AdminController@updateTag')->name('admin.tags.update');
+        Route::post('/services/store', 'AdminServiceController@store')->name('admin.services.store');
+        Route::post('/services/{service}/update', 'AdminServiceController@update')->name('admin.services.update');
+        Route::get('/services/{service}/delete', 'AdminServiceController@destroy')->name('admin.services.delete');
+        Route::get('/about-us/{item}/delete', 'AdminAboutController@destroy')->name('admin.about.delete');
+        Route::post('/about-us/store', 'AdminAboutController@store')->name('admin.about.store');
+        Route::post('/about-us/{item}/update', 'AdminAboutController@update')->name('admin.about.update');
+        Route::get('/reservations/prescription/{pres}', 'AdminReservation@prescriptionPdf')->name('admin.prescription.pdf');
+        Route::get('/reservations/prescription/{pres}/delete', 'AdminReservation@deletePrescription')->name('admin.prescription.delete');
+        Route::post('/reservations/prescription/{pres}/store', 'AdminReservation@store')->name('admin.prescription.store');
+        Route::post('/reservations/prescription/{pres}/update', 'AdminReservation@update')->name('admin.prescription.update');
+        Route::get('/reservations/{res}/delete', 'AdminReservation@destroy')->name('admin.reservations.destroy');
+    });
+});
